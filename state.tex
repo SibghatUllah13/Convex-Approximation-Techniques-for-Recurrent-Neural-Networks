@@ -1,0 +1,208 @@
+In this chapter, I discuss the state of the art in machine learning concerning the recurrent neural networks. More specifically, I discuss the most important problem in recurrent neural network and the possible solutions including the famous architecture known as Long short term memory neural networks. I then move forward and discuss the state of the art training algorithms in neural networks including Stochastic Gradient Descent, Adagrad and Adam. 
+
+\section {Vanishing and Exploding Gradient Problem}
+
+The previous discussion gives us an introduction to the optimization in recurrent neural networks. As we can clearly see, the architecture of recurrent networks allows us to consider the dependency or persistence in the input. Examples of such inputs are encountered frequently in image processing, signal processing, time series analysis, and many other natural phenomenon which care for the organization of the input as sequences. As powerful as recurrent networks are, they still face some serious problems. 
+
+More specifically, if the input sequence is short, recurrent networks are able to consider the dependency structure. However, once the length of the sequence increases, the network starts to forget the previous dependency structure. This happens because of a very important concept known in literature as vanishing gradient problem [2]. The elaboration of vanishing gradient problem is that once the network becomes very deep, the gradient starts to vanish. This happens because the gradient received from the output layer starts to decrease exponentially as it reaches back to the input layer in the Back-propagation step [3]. In other words, the gradient starts to decline as an exponential function of the number of layers present in the network. This is the most important challenge that recurrent neural network faces and often results in poor local optimum.
+
+As opposed to vanishing gradient problem, the recurrent neural network faces another challenge known as exploding gradient problem. This means that gradient starts to increase/explode as an exponential function  of the number of layers present in the network. The simplest reason for vanishing and exploding gradient problem is the presence of chain rule multiplication of the gradients. The problems were discovered by Sepp Hochreiter [2] in 1991 and since then many solutions have been proposed including an extremely regulated structure such as Long short term memory neural networks [4]. 
+
+An important thing to note is that the vanishing and exploding gradient problems do not theoretically mean that there is no optimization. Rather, in the case of vanishing gradient problem, although theoretically neural network is optimizing, the problem is much more numeric. This means that practically the gradient is approaching to zero and consequently, the optimization is not sufficient and can not result in a good local minimum. In the case of the exploding gradient problem, it means that gradient is exploding i.e. reaching to a very high number. As a result, the optimization is not stable. 
+
+A common practice to counter the exploding gradient problem is the clipping method [5]. Another interesting thing to note is that the vanishing gradient problem is much more difficult to diagnose and treat than exploding gradient problem although both problems are of the same nature. Combining all these points, we can safely conclude that a vanilla recurrent neural network can't effectively be optimized in the presence of vanishing or exploding gradient problem even with very sophisticated algorithms such as Back-propagation [3]. As such, it leads to a structure which can regulate the gradient explicitly giving birth to Long short term memory neural networks aka LSTM as presented in [4].
+
+\newpage
+
+\section {Long Short Term Memory Neural Networks}
+
+Long short term memory neural network aka LSTM is a special class of recurrent neural networks. LSTMs are specially designed to solve the issue of long term dependencies i.e. vanishing and exploding gradient problem. As a result, LSTM is the most widely accepted neural network structure currently in the field of signal, image and natural language processing. 
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.45]{lstm}
+\caption{The internal structure of an LSTM unit as described in expressions (2.1-2.6)}
+\end{figure}
+
+It is evident that all recurrent neural networks have the recurrent connection i.e. loop to themselves. The difference between vanilla recurrent neural network and LSTM thus is the internal structure of node. In the case of vanilla recurrent neural networks which have been discussed previously, each neuron has a very simple structure in that it takes an input and previous hidden state and computes the activation function on the weighted sum of both terms.
+
+The internal structure of an LSTM unit differs in that it computes what part of the input sequence the network should forget and what new information it should add. It does this by the explicit small computing units called gates which are present in every neuron. Three common choices for these gates are the input, the forget and the output gate although many variations on the number and types of gates exist. The internal structure of a modern LSTM unit or cell is presented in figure 2.1 which is slightly different to the one in [4].
+
+I now move forward to describe the internal structure of an LSTM cell that requires the introduction of some concepts. More specifically, the above discussed long term memory takes the name of cell state or unit state in LSTM. The recurrent connection allows the information from previous time steps to be stored in the LSTM cell. A modern LSTM cell has four gates called the input activation gate, input gate, forget gate and the output gate. The cell state is modified by the forget gate, input activation gate and input gate. Forget gate decides which part of the previous cell state needs to be deleted. The input activation gate and the input gate combine together to select some part of the input to be added to the cell state. Finally, the hidden state is computed using the cell state and the output gate. This hidden state is used to compute what to forget, input and output in the cell at the next time step. The notations and expressions to cover the entire discussion so far are presented below.
+
+
+\begin{equation}
+\textbf{a}_t = tanh(\textbf{W}_{IA}\textbf{x}_{t}+\textbf{W}_{HA}\textbf{h}_{t-1}+\textbf{b}_{a})
+\end{equation}
+
+
+\begin{equation}
+\textbf{i}_t = \sigma(\textbf{W}_{II}\textbf{x}_{t}+\textbf{W}_{HI}\textbf{h}_{t-1}+\textbf{b}_{i})
+\end{equation}
+
+\begin{equation}
+\textbf{f}_t = \sigma(\textbf{W}_{IF}\textbf{x}_{t}+\textbf{W}_{HF}\textbf{h}_{t-1}+\textbf{b}_{f})
+\end{equation}
+  
+\begin{equation}
+\textbf{o}_t = \sigma(\textbf{W}_{IO}\textbf{x}_{t}+\textbf{W}_{HO}\textbf{h}_{t-1}+\textbf{b}_{o})
+\end{equation}
+
+In (2.1-2.4), $\textbf{x}_{t}$ is the input vector at current time step while $\textbf{h}_{t-1}$ is the hidden state at previous time step. $\textbf{W}_{IA}$, $\textbf{W}_{II}$, $\textbf{W}_{IF}$, 
+$\textbf{W}_{IO}$ are the weights of the connections coming from the input. Similarly, $\textbf{W}_{HA}$, 
+$\textbf{W}_{HI}$, $\textbf{W}_{HF}$, $\textbf{W}_{HO}$ are the weights of the recurrent connection i.e. connection from the previous hidden state. Additionally, a bias vector is added for all four gates to adjust the bias. Finally, the activation function is computed for all four gates. Normal activation function for input activation gate presented in (2.1) is tanh. For the input, forget and output gates presented respectively in (2.2), (2.3) and (2.4) sigmoid is used as the activation function. 
+
+Finally, we can conclude that the input activation, input ,forget and output gates all take similar inputs and compute their activation functions accordingly. 
+
+Once we have computed the value of all four gates, we can compute the cell state aka cell memory,  internal memory or long term memory and the hidden state aka the output of the unit. The equations for both are presented below.
+
+\begin{equation}
+\textbf{C}_t = \textbf{a}_t * \textbf{i}_t + \textbf{f}_t * \textbf{C}_{t-1}
+\end{equation}
+
+\begin{equation}
+\textbf{h}_t =  tanh(\textbf{C}_{t}) * \textbf{o}_t
+\end{equation}
+
+In (2.5) and (2.6) $\textbf{C}_t$ denotes the cell state, cell memory, internal memory or the long term memory. As it is obvious in (2.5), $\textbf{C}_t$ depends on input activation, input and forget gates which depend on the current input $\textbf{x}_{t}$ and the previous hidden state $\textbf{h}_{t-1}$. The current hidden state (2.6) denoted as $\textbf{h}_t$ depends on the current cell state $\textbf{C}_t$ and the output gate $\textbf{o}_t$.   
+ 
+The relationships in (2.1-2.6) describe the computations necessary for a single LSTM cell in the forward pass. The input gate along side the input activation gate decide which part of the input i.e. new information should be added to the cell memory. The forget gate decides which previous information needs to be forgotten from the cell memory. The output gate decides what should be the output based on what information was added and forgotten. Together, these gates explicitly decide what part of the sequence is important to remember. As a result, the network is able to remember the short term dependencies in a very long sequence thus giving rise to the term long short term memory.
+
+Thus, we can easily understand as to why these networks are so good at remembering short term memory for a long period of time which is a common happening in image processing, text processing, language models and protein protein interaction . The most important thing is that within each neuron, we have a special mechanism of regulating the information flow. 
+
+One important thing to note is that, like any other neural network, the weights of the connections to these gates and the biases are the parameters of the network and have to be learned from the external input. This also means that we roughly have three to four times more parameters to learn as compared to a vanilla recurrent network. This can be problematic since many optimization algorithms like Successive convex approximation (discussed in next chapter) save the parameters of the network in a matrix which becomes difficult computationally for a large number of parameters. Further, inverting a matrix also becomes problematic as the number of elements grow.     
+
+In the next section, I describe the state of the art in training neural networks. More specifically, I discuss the first order approaches like Stochastic Gradient Descent, Adagrad [12] and Adam [7] for neural networks training. I also briefly discuss some other approaches for neural networks training. 
+
+\section {Gradient Descent based Optimization Algorithms}
+
+In this section, I present a brief overview of the most famous algorithms based on Gradient descent which are used in deep learning. I present the idea of Gradient descent and then move to discuss Stochastic gradient descent. Next, I discuss algorithms based on Momentum including Adagrad [12] and Adam [7] in much more detail.
+
+Gradient descent is a way to minimize the value of an arbitrary objective function $f(\bm{\theta})$ with 
+$\bm{\theta} \in R^z$ acting as the vector set of parameters. More specifically, we have to find the values of parameters $\bm{\theta}^*$ such that $f$ takes the (local) minimum value. Gradient descent does this by adjusting the parameters in the opposite direction of the gradient of the objective function which can be denoted as $\delta_\theta f(\bm{\theta})$. The learning rate $\eta$ determines the scale of adjustment aka the learning rate or update rate. This process is employed untill we reach a (local) minimum value.
+
+There are three common variations of Gradient descent known as Batch gradient descent, Stochastic gradient descent and Mini-batch gradient descent. These three types vary in the amount of data used for a single update of the parameters. 
+
+Batch gradient descent aka vanilla Gradient descent computes the gradient of the objective function with respect to the set of parameters $\bm{\theta}$ for the entire data set. This is expressed in (2.7). 
+
+\begin{equation}
+\bm{\theta} = \bm{\theta} - \eta * \delta_\theta f(\bm{\theta})
+\end{equation}   
+
+It is evident that Batch gradient descent is not efficient for large scale deep learning since the set of parameters $\bm{\theta}$ becomes huge and is thus difficult to manage. Further, computing gradient becomes expensive and unworthy since it involves redundant computation. For problems related to low dimensions, it is used in practice but we are mostly concerned with high dimensional set up which is a common happening in large scale machine learning. Now, I will briefly discuss Stochastic gradient descent for deep learning as presented in [10] although the original work for Stochastic estimation was done in 1952 and is presented in [9].
+
+\section {Stochastic Gradient Descent}
+
+Stochastic gradient descent is used to avoid the computational challenges of Batch gradient descent. Stochastic gradient descent does this by updating the parameter $\bm{\theta}$ of the objective function $f$ at each iteration by using only a single input instance which is denoted here as $(\textbf{x}_i,y_i)$. This is expressed in (2.8).
+
+\begin{equation}
+\bm{\theta} = \bm{\theta} - \eta * \delta_\theta f(\bm{\theta};\textbf{x}_i;y_i)
+\end{equation}   
+ 
+It is understandable from the above expression that Stochastic gradient descent is much faster than the Batch gradient descent. This is since Stochastic gradient descent only uses a single input example for each update. This becomes computationally feasible and avoids redundant computation for calculating the gradients for similar examples which is a common happening in Batch gradient descent. An additional property of Stochastic gradient descent is that it can be used in online learning. 
+
+Although Stochastic gradient descent is much cheaper to compute, it has its draw backs. Stochastic gradient descent oscillates while converging to the (local) minimum. This is due to the intrinsic nature of the algorithm since it only uses one input instance at every iteration. Thus, it is also affected by the noise presented in the data set and is essentially a noisy version of the Batch gradient descent. This oscillation becomes a serious problem in Stochastic gradient descent convergence. Recently, some solutions have been proposed to avoid this issue including the Mini-batch gradient descent based algorithms which are discussed in the next section.    
+
+\section {Mini-Batch Gradient Descent}
+
+Mini-batch gradient descent is used to counter the problems faced by Batch gradient descent and Stochastic gradient descent. It does this by combining the both concepts. More specifically, it takes the mini batch of size $L$ from the entire data set at each iteration. It then uses this mini batch to update the parameters at that iteration. This is formally expressed in (2.9).
+
+\begin{equation}
+\bm{\theta} = \bm{\theta} -\eta* \delta_\theta f(\bm{\theta};\textbf{x}_{(i,i+L)};y_{(i,i+L)})
+\end{equation}
+
+Using a mini-batch in this fashion has many advantages. The most important advantage is that it is computationally cheaper compared to the entire data set since the size of mini batch is very small. It also removes the disadvantage  of Stochastic gradient descent since it is not affected by the noise the way Stochastic gradient descent is affected. Thus, Mini-batch gradient descent has become the most important Gradient descent based approach in deep learning. All of the state of the art neural networks training algorithms including AdaGrad [12] and Adam [7] are based on Mini-batch gradient descent. 
+
+Mini-batch gradient descent however has some challenges. The most important challenge is to choose the learning rate $\eta$ in a very smart way. This challenge is addressed by Adagrad [12] which is discussed in the next section. 
+
+\section {Adagrad}
+
+Adagrad [12] is one of the most efficient algorithms to train neural networks. It is inspired by the concept of Momentum [22]. As we have already seen, Stochastic gradient descent faces the challenge of oscillations around the local optimum which can be a serious problem in convergence. Momentum [22] is a concept known to move Stochastic gradient descent in relevant direction only, thus significantly reducing the oscillations. It accomplishes this by adding the information of past updates at each iteration. Intuitively, by having the information of past updates, Stochastic gradient descent is not affected by the current noise in the input and thus moves only in the relevant direction of local minimum. As a result, convergence is faster. An image representation of Stochastic gradient descent with and with out Momentum is presented in figure 2.2.
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.45]{wm}
+\caption{Stochastic gradient descent with and without Momentum}
+\end{figure} 
+    
+Formally, we can express this in (2.10)
+
+\begin{equation}
+\bm{\theta} = \bm{\theta} - \lbrace \beta \textbf{v}_{t-1}+\eta \delta_\theta f(\bm{\theta}) \rbrace
+\end{equation}
+
+In the above equation $\textbf{v}_ {t-1}$ is the update vector at previous iteration aka Momentum where as $\beta$ is the scalar weighting the contribution of Momentum in the current update. $\beta$ typically takes a higher value such as 0.9. This means Stochastic Gradient Descent is greatly affected by the previous updates and results in smooth optimization.
+
+Another concept related to Momentum [22] and presented in [12] is that within a data set, some features are rare yet more important than the others. Thus, the Momentum also needs to be adaptive referring it should consider the sparsity in the data set. The solution gives birth to a very famous family of algorithms known as Adagrad [12]. Adagrad adapts the learning rate to the parameters as it performs larger updates for rare features and small updates for frequent features. 
+
+Formally, we can denote the gradient of a single parameter $i$ at $k$th iteration as $g_{ik}$. Lets also assume $\theta_{ik}$ to be the value of parameter $i$ at this iteration. Using this gradient in next iteration can accelerate Stochastic gradient descent in only relevant direction of the local minimum with respect to the parameter $i$. This is formally expressed in (2.11)
+
+\begin{equation}
+\theta_{ik+1} = \theta_{ik} - \eta  g_{ik}
+\end{equation}  
+
+The final learning rule for a single parameter then becomes
+
+\begin{equation}
+\theta_{ik+1} = \theta_{ik} -  g_{ik} *  \frac{\eta}{\sqrt{G_{iik} + \epsilon}} 
+\end{equation}
+
+Where $\textbf{G}_k \in R^{z*z}$ is a diagonal matrix where each diagonal entry $iik$ is the sum of the squares of the gradient with respect to  $\theta_i$ upto iteration $k$ and $\epsilon$ is the term used to avoid the numerical problem of division by zero.  
+
+The update rule for all the parameters at each iteration based on (2.12) is given in (2.13)
+
+\begin{equation}
+\bm{\theta}_{k+1} = \bm{\theta}_{k} -  \textbf{g}_{k} *  \frac{\eta}{\sqrt{\textbf{G}_{k} + \epsilon}} 
+\end{equation}
+
+The expression in (2.13) is the final representation of Adagrad as taken from [10] and [12]. Adagrad has proven to be a nice candidate to handle sparsity but still has many drawbacks including the positive summation of gradients in the denominator which keeps growing and results in little to no learning in extreme cases. In the next section, I describe Adam which is state of the art algorithm to train neural networks and is inspired from Momentum [22] and Adagrad [12].
+
+\section {Adam}
+
+Adam : adaptive moment estimation is one of the most efficient algorithms to train neural networks. It was fundamentally inspired by Momentum. Momentum is used to overcome the oscillation problem of Stochastic gradient descent[9]. More specifically, Stochastic gradient descent oscillates across the slopes of the cost function making very little progress to reach the local solution. This is intuitive, since Stochastic gradient descent only uses very little data i.e one input example at every iteration to optimize the cost function. Using very little information like that, it's essentially a noisy version of the Batch gradient descent [10] and thus oscillates while converging. This oscillation can be a serious problem in rate of convergence for Stochastic gradient descent. To improve the performance of Stochastic gradient descent, a new term Momentum [22] was introduced in machine learning literature. 
+
+The basic idea behind Momentum is to accelerate the Stochastic gradient descent in the direction of local optimum by minimizing the number of oscillations. This can be done by including the information of the past gradients at each time step. With the information regarding the gradients at previous time step, Stochastic gradient descent can reduce the oscillations. 
+
+Intuitively, we can understand that Momentum increases the stability in optimization by accelerating only in the relevant direction. Fundamentally, we can think that by using information of previous gradients, we can achieve convergence in less number of iterations since the optimization is much smoother. 
+
+\section {Neural Networks Optimization via Adam}
+
+Adaptive Moment Estimation : Adam is a class of algorithms that use adaptive learning rate for each parameter. The first notable algorithm in neural networks literature which used adaptive learning rate was Adagrad [12] which has been discussed in the last section. Later on, similar algorithms like Adadelta [13],RMSprop [10], Adamax [7] and Nadam [10] were introduced. Adam can also be considered as an extension of this family in the sense that it uses adaptive learning rate for each parameter. More specifically,
+
+Let $f(\bm{\theta})$ be the stochastic objective function with $\bm{\theta}$ acting as the vector of parameters. We are interested in minimizing the expected value of this function denoted as $E[f(\bm{\theta})]$. We assume here that $f(\bm{\theta})$ is differentiable with respect to its parameters 
+$\bm{\theta}$. Let us also introduce the vector of partial derivatives of $f(\bm{\theta})$ at time step 
+$t$ as 
+
+\begin{equation}
+\textbf{g}_t = \delta f(\bm{\theta})
+\end{equation} 
+
+Now, we can estimate the 1st and 2nd moment (mean and uncentered variance) of gradient at time step $t$ as 
+
+\begin{equation}
+\textbf{m}_t = \beta_{1} \textbf{m}_{t-1} + (1-\beta_{1}) \textbf{g}_t
+\end{equation}
+and
+\begin{equation}
+\textbf{v}_t = \beta_{2} \textbf{v}_{t-1} + (1-\beta_{2}) \textbf{g}_t^2
+\end{equation}
+
+respectively where $\beta_{1}$ and $\beta_{2}$ are the hyper-parameters in the region $[0,1)$ controlling the contribution of exponential decaying average of the 1st and 2nd moment of the past gradients. Here $\textbf{g}_t^2$ represents the element wise square of $\textbf{g}_t$. 
+The algorithm, thus updates the exponential decaying average of the gradient $\textbf{m}_t$ and squared gradient $\textbf{v}_t$. In [7], author initialize it with zeros and explain that because of this initialization, these estimates are biased towards zero. Thus, two new equations are introduced for the unbiased estimates of $\textbf{m}_t$ and $\textbf{v}_t$. 
+\begin{equation}
+\hat{\textbf{m}_t} = \dfrac{\textbf{m}_t}{1-\beta_{1}^t}
+\end{equation}
+\begin{equation}
+\hat{\textbf{v}_t} = \dfrac{\textbf{v}_t}{1-\beta_{2}^t}
+\end{equation}
+Where $\beta_{1}^t$ and $\beta_{2}^t$ are the hyper-parameters discussed earlier at time step $t$. 
+Finally, the update rule for the vector of parameters $\bm{\theta}$ is given below
+\begin{equation}
+\bm{\theta}_{t+1} = \bm{\theta}_{t} - \dfrac{\eta}{\sqrt{\hat{\textbf{v}_t}}+\epsilon} \hat{\textbf{m}_t}
+\end{equation}
+where $\eta$ is the learning rate.
+ 
+Adam is one of the most sophisticated neural networks training algorithms and can be used to train a variety of networks. One important thing to note is that all the algorithms discussed above are first order Gradient descent algorithms. Neural networks training has gained significant attention in last decade or so and many other techniques as opposed to first order Gradient descent have been investigated. Examples for such work include the famous Real time recurrent learning (RTRL) [23] as opposed to Back-Propagation through time, Quasi newton [24] and Hessian free optimization of recurrent networks [25].  
+
+In the next chapter, I present Successive convex approximation as taken from [8] and is adapted here for general recurrent neural network architecture. 
+ 

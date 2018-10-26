@@ -1,0 +1,138 @@
+In this chapter, I discuss the basics necessary to understand the dissertation. More specifically, I discuss the idea of neural networks, the feed forward and recurrent neural network architectures and the optimization in recurrent neural networks. The notations introduced in this chapter will be used throughout the dissertation. 
+ 
+\section{Neural Networks}
+
+An artificial neural network denoted here as ANN is a computational model that is loosely inspired by the way biological neural networks in the human brain process information. Artificial neural networks have generated a lot of excitement in machine learning research and industry, thanks to many breakthrough results in speech recognition, computer vision and text processing. In this dissertation, I investigate the optimization in recurrent neural network which is one of the widely used neural network architectures.
+
+The formal definition of artificial neural network is in agreement to the informal introduction above. More specifically, an artificial neural network can be defined as a computing system made up of a number of simple, highly interconnected processing elements which process information by their dynamic state response to the external inputs. The small interconnected computational elements are known as artificial neurons, nodes or processing units. These small units are the basis of a bigger network when they are connected with each other.
+
+A single artificial neuron receives input from some other neurons, or from an external source and computes an output. Each input has an associated weight which is assigned on the basis of its relative importance to other inputs. The neuron applies a function to the weighted sum of its inputs. This function is often referred to as activation function. The intuition of neural network as a computational model is that the weights associated to each external or internal input are configurable which means that changing the weights result in changing the behavior of these artificial neurons. Thus, if one is able to optimize the weights in a neural network, the network will be able to perform in desired way.
+
+\section{Neural Network Architecture}
+
+Summarizing the above discussion we can conclude that a neural network is made of neurons which are interconnected with each other forming a network topology. The weights of these connections can be learned to optimize the behavior of the entire network. To add to that, the fundamental responsibility of any neuron is to compute its activation function. Thus intuitively, we can solve the most challenging tasks with neural network once we are able to learn the weights of the connections in the network. We refer to them as the parameters of the network.
+ 
+Next, I will briefly introduce the important features of the architecture of a feed forward neural network aka multilayer perceptron.
+
+A feed forward neural network aka a vanilla neural network can be divided in three logical layers. A layer is a vertical series or block of neurons. The three types are often referred to as the input layer, the hidden layer and the output layer. The input layer takes input data from some external source. No computation is performed in input layer, it just passes the information to the next layer. The next layer is called the hidden layer. A neural network can have multiple hidden layers. The intermediate processing or computation of neural network is done in hidden layer(s). The third type of layer is the output layer. Here, we receive the output of the neural network. 
+
+The network consists of connections, each connection transferring the output of a neuron $i$ to the input of a neuron $j$. In this sense $i$ is the predecessor of $j$ and $j$ is the successor of $i$, each connection is assigned a weight $W_{ij}$.
+
+It is evident from the above discussion that each neuron computes an activation function. The activation function of a neuron defines the output of that neuron given an input or set of inputs. The choice of activation function is wide. However, it should be intuitive that only the choice of a non linear activation function can result in making the neural network extremely powerful. One of the common choices of  activation functions is a sigmoid function. 
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.5]{nn}
+\caption{An example of a simple feed forward neural network aka multilayer perceptron with three layers.}
+\end{figure}
+
+Once we understand the architecture of the network, we can understand the concept of learning rule. The learning rule is a method to modify the weights of the connections in the network. In other words, the learning rules determines the optimization of the so called parameters of the network. Figure 1.1 presents a simple feed forward neural network with one input layer having three neurons, a hidden layer with four neurons and finally an output layer with two neurons. In this case, the network is fully connected however flexible architectures are also possible. 
+
+\newpage
+\section{Recurrent Neural Network}
+
+A recurrent neural network denoted as RNN throughout the dissertation is a class of artificial neural networks where the links between neurons form a recurrent connection i.e loop. This makes the recurrent networks more powerful as they can show dynamic behavior for a given input sequence. This sequence is typically based on time dependence [1] however other sequences based on natural phenomenon(s)and/or the properties of problem at hand can also be used. Recurrent network is a generic class of neural networks that can be specialized to do a variety of tasks. Some of the major classes of recurrent networks are Bi-directional,Gated recurrent units and Long short term memory networks.
+
+
+As opposed to feed forward neural networks (as presented in figure 1.1), recurrent neural networks can use their internal state (aka memory) to process the time dependent inputs. Examples for such inputs are common in the field of image processing, signal processing, natural language processing, time series prediction, computational biology and computational chemistry. 
+
+\section {Recurrent Neural Network Architecture}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.5]{RNN}
+\caption{An example of a recurrent network with only one hidden layer. The network is presented in folded fashion with a generic recurrent connection providing the previous hidden state at each time step similar to the relationship in (1.4).}
+\end{figure}
+
+Recurrent neural network is a class of supervised machine learning models. The only peculiar thing about them is that they are made of neurons which are connected to each other forming a loop. These loops are sometimes referred to as sequences. Training a recurrent neural network involves minimizing the difference between the output which is estimated from training data and the actual output given in training data. This is done by optimizing the weights of these artificial neurons. A simple example of a recurrent network is given in figure 1.2. 
+
+
+A simple recurrent neural network has three layers known as the input, the hidden and the output layer respectively. The input layer has $K$ input units [6]. More specifically, the input to this layer at each time step $t$ is a vector denoted as $\textbf{x}_t$. Similarly, I can denote all input vectors through different time steps as
+
+\begin{equation}
+\textbf{x}_t = ({x}_1,{x}_2,.....,{x}_k)
+\end{equation}
+
+In the case of fully connected recurrent network, all the neurons of the input layer are connected to all the neurons of the hidden layer. These connections from input to the hidden layer are defined with a weight matrix denoted as $\textbf {W}_{IH}$. The hidden layer has $N$ neurons
+\begin{equation}
+\textbf{h}_t = (h_1,h_2,....h_N)
+\end{equation} 
+
+which are connected to each other through sequences of time. The hidden layer controls the so called memory of the network through its activation function. This can be defined as
+
+\begin{equation}
+\textbf{h}_t = f_H(\textbf{o}_t)
+\end{equation}
+
+where as
+
+\begin{equation}
+\textbf{o}_t = \textbf{W}_{IH}\textbf{x}_{t}+\textbf{W}_{HH}\textbf{h}_{t-1}+\textbf{b}_{h}
+\end{equation}
+And $f_{H}$ is the activation function for the hidden layer, $\textbf {W}_{HH}$ is the weight of all the connections from the previous hidden state and $\textbf {b}_{H}$ is the bias vector of the hidden units. These neurons of the hidden layer are connected to the output layer with weighted connections denoted by 
+$\textbf {W}_{HO}$. The output layer has $M$ units
+ 
+\begin{equation}
+\textbf{y}_t = (y_1,y_2,....y_M)
+\end{equation}
+which can be computed by
+\begin{equation}
+\textbf{y}_t= f_O(\textbf{W}_{HO}\textbf{h}_{t}+\textbf{b}_{o})
+\end{equation} 
+Where $f_{O}$ is the activation function for the output layer and $\textbf {b}_{o}$ is the bias vector of the output units.
+
+\section {Learning in Recurrent Neural Network}
+
+As it has already been discussed, recurrent network is a generic class of neural networks that can learn dynamic sequences in a data set. Typically, we use recurrent networks in the fields of image, signal and natural language processing however, they can be seamlessly extended to many other domains. Since all versions of recurrent networks have one peculiar thing in specific i.e. recurrent sequence, I use that to express the learning process in recurrent networks.\\
+
+The first step in recurrent networks is the forward pass. The interpretation is that given a vector of input $\textbf{x}_j$ at time $j$, one can compute the hidden state and the output of the neural network at that time step using the relationships presented in (1.3), (1.4) and (1.6). This simply means that having the input $\textbf{x}_j$ at time $j$, one can compute $\textbf{o}_j$ in (1.4) by specifying the weight matrices $\textbf{W}_{IH}$ , $\textbf{W}_{HH}$ and the bias vector $\textbf{b}_{h}$. Here 
+$\textbf{W}_{IH}$ denotes the weight matrix for the connections of the input layer while $\textbf{W}_{HH}$ denotes the weights of the recurrent connections i.e. previous hidden state. To adjust the bias, we add the vector $\textbf{b}_{h}$ which provides additional parameters of the network. 
+
+After the vector $\textbf{o}_j$ is computed, next step is to compute the activation function provided in (1.3) which will give us the value of all the neurons in the first hidden layer. Similarly, all the hidden layers (if more than one) can be computed with the output of the previous hidden layer acting as the input and the previous hidden state $\textbf{h}_{j-1}$ using (1.3) and (1.4). Once all the hidden layers at time $j$ are computed, the network produces the current hidden state denoted as $\textbf{h}_{j}$. 
+
+After having the hidden state of the network denoted as $\textbf{h}_{j}$, we can use the relationship in (1.6) to compute the output of the network denoted as $\textbf{y}_j$ by specifying the weight matrix 
+$\textbf{W}_{Ho}$ and the bias vector $\textbf{b}_{o}$. Here, the weight matrix $\textbf{W}_{Ho}$ contains the weights of the connections coming from the current hidden state. 
+
+Finally, the activation function of the output layer is computed which produces the value of the output neurons. At this point, we have computed the output of the network for one training example at time $j$ which can be compared to the actual output provided in the data set to compute the error. This is done using the error or the so called loss function. 
+
+The choice of the loss function is wide however it's a common practice in neural network literature to use a convex loss function. For regression problems, normally squared error is used while for classification problems, cross entropy loss is used. These loss functions are used in combination with $l_1$ or $l_2$ regularization. For the sake of optimization, the expressions in (1.3), (1.4) and (1.6) can be substituted with an arbitrary recurrent neural network function denoted as $f(\textbf{w};j,\textbf{x}_i)$  which takes two arguments. The first argument is the time step $j$ while the second argument is the real valued vector of inputs $\textbf{x}_i\in R^{d}$ i.e. $i$th training example at time $j$. This function gives us the output of the network at time $j$ for $i$th training example and covers the expressions in (1.3), (1.4) and (1.6).   
+
+Now, assuming we have a training data set of $N$ sequences where each such sequence can be denoted as 
+$S=\lbrace \textbf{x}_i,y_i \rbrace$. Also assuming to have fixed the number of time steps which is denoted by $M$ and using an arbitrary convex loss function $l(.,.)$ combined with an arbitrary choice for regularization, the learning of the recurrent neural network is solving the following optimization problem.
+
+\begin{equation}
+min ( U(\textbf{w}) ) = \frac{1}{N} \frac{1}{M} \sum_{i=1}^{N} \sum_{j=1}^{M} l(y_{ij},f(\textbf{w};j,\textbf{x}_i))+\lambda r(w)
+\end{equation}
+ 
+In (1.7), $\textbf{w}$ shows all the parameters of the network as presented in (1.3), (1.4) and (1.6), $y_{ij}$ is the actual output for the sequence $i$ at time step $j$, $f(\textbf{w};j,\textbf{x}_i)$ is the corresponding estimated output, and $l(.,.)$ is a convex, smooth loss function. I assume here that it meets all the assumptions provided by Successive convex approximation which are discussed in detail in chapter 3, and can be used for optimization. $r(\textbf{w})$ is the regularization term which is weighted by a scalar $\lambda$. The optimization problem in (1.7) is non convex since we have a smooth convex loss function $l(.,.)$ with the non convex neural network function $f(\textbf{w};j,\textbf{x}_i)$. The neural network function is non convex since we assume the activation functions of the layers to be non convex.  
+   
+The simplest intuition of (1.7) is that we have to find the set of parameters $\textbf{w}^*$ so as to minimize the value of the loss function. 
+
+Once we compute the aggregated loss of the neural network function for all $\textbf{x}_i$ where $i\in 1,...,N$ and for all time steps $j$ where $j\in 1,....,M$ as presented in (1.7), we can adjust the parameters so as to have a smaller value of the loss function at the next iteration. This is done by a concept known as Back-propagation. The main idea behind Back-propagation is to find the gradient of the total aggregated loss in (1.7) with respect to the parameters of the network. This is implemented by the chain rule in differential calculus. For the case of recurrent networks, this concept takes the name of Back-propagation through time and is presented in detail in [3]. 
+
+Back-propagation through time first unrolls the recurrent network. After that, we are able to compute the aggregated error and run the normal Back-propagation algorithm same as a feed forward network. However, this process generally results in a much deeper architecture and the process is thus called Back-propagation through time since the network is deep due to the sequence length. This also implies that the network is much harder to train because of the presence of huge number of parameters and the number of hidden layers. The latter gives birth to the concept of vanishing and exploding gradient problem which is discussed in detail in the next chapter.     
+  
+
+Recurrent networks can vary in that they can have different sequence types. The four normal categories of sequence types (number of inputs as compared to the number of outputs in the network) are given in figure 1.3. 
+\begin{figure}
+\centering
+\includegraphics[scale=0.45]{sequence}
+\caption{Different sequence types in recurrent networks}
+\end{figure}
+
+In the next chapter, I will discuss state of the art in deep learning and recurrent networks including the long short term memory architecture and the training algorithms namely the Stochastic Gradient Descent, Adagrad and Adam. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

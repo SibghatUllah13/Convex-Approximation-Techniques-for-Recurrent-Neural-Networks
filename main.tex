@@ -1,0 +1,237 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{bm}
+\usepackage[ampersand]{easylist}
+\usepackage{subcaption}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage[nottoc]{tocbibind}
+\usepackage{biblatex}
+\addbibresource{references.bib}
+\graphicspath{ {images/} }
+
+\title{
+	{Convex Approximation techniques for Recurrent Neural Networks}\\
+	{\large Sapienza University of Rome}\\
+	{\includegraphics [scale=0.5] {university.jpg}}
+}
+\author{Sibghat Ullah}
+\date{\today}
+ 
+
+\begin{document}
+
+\maketitle
+
+\chapter*{Dedication}
+
+I dedicate this dissertation to my parents for their unconditional love and support throughout my academic career\dots
+
+\chapter*{Declaration}
+
+This dissertation is submitted for the Masters degree in Data Science at Sapienza University of Rome. I hereby declare that except where specific reference is made to the work of others, the contents of this dissertation are original and have not been submitted in whole or in part for consideration for any other degree or qualification in this, or any other university. This dissertation is my own work and contains nothing which is the outcome of work done in collaboration with others, except as specified in the text and Acknowledgments. This dissertation contains 53 pages including bibliography and equations.
+\\
+\\
+\\
+\\
+\\
+\author{Sibghat Ullah} \\
+\date{\today}
+
+
+
+
+\chapter*{Acknowledgements}
+
+I would first like to thank my thesis advisor Professor Aurelio Uncini. His supervision and guidance in my research meant a great deal to me. I would also like to thank Dr. Simone Scardapane for his valuable advice, continuous overseeing and time throughout the process of researching and writing this thesis. 
+
+Finally, I would express my gratitude to my parents for providing me with unfailing support and continuous encouragement throughout my years of study. This accomplishment would not have been possible without them. Thank you. 
+\\
+\\
+\\
+\\
+\\
+\author{Sibghat Ullah}\\
+\date{\today}
+
+\chapter*{Abstract}
+
+\textbf{Deep Learning} has been at the core of research in machine learning and artificial intelligence for the last decade or so. Many different deep learning architectures, models and algorithms have been proposed and investigated thoroughly. Deep learning architectures have been used on a variety of applications including computer vision, text mining and signal processing. As powerful as deep learning is, the learning process in deep networks still demands a lot of attention to make deep learning more robust, stable, heterogeneous and attractive. This is due to the nature of the problem and its vast applicability.
+
+Recurrent networks are intuitively the most difficult networks to train and at the same time remain one of the widely used architectures in deep learning. More specifically, recurrent networks have been applied quite recently in different sequence learning problems including image, signal and natural language processing. They have reached greater accuracy than many of the state of the art machine learning models including other deep learning architectures i.e. feed forward neural networks. 
+
+As powerful as recurrent neural networks are, they are extremely difficult to train. Thus, the dissertation aims at optimizing the parameters and hyper-parameters of learning algorithm on recurrent network. More specifically, I propose to investigate Successive convex approximation (SCA) as the training algorithm for recurrent neural networks and Gaussian processes for the hyper-parameters optimization of Successive convex approximation. 
+
+I first describe the neural network as a computational model. Next, I describe the state of the art and the most common issues related to recurrent neural networks. I then move forward to describe Successive convex approximation and recurrent neural networks optimization. After that, the role of hyper-parameters and their optimization is discussed. Finally, the experimental results on a benchmark classification problem using Long short term memory neural networks  which are a special class of recurrent networks are discussed. Some important notes and future research line on Successive convex approximation is also presented in the final section of the dissertation. 
+
+\tableofcontents
+
+\chapter{Introduction}
+\input{chapters/introduction}
+\chapter{State of the Art}
+\input{chapters/state}
+\chapter{Optimization in Recurrent Networks via SCA}
+\input{chapters/optimization}
+\chapter{Hyper-parameters Optimization}
+\input{chapters/hyper}
+\chapter{Experimental Results}
+\input{chapters/results}
+
+
+\begin{thebibliography}{9}
+
+\bibitem{Elman}
+\textbf{Jeffrey L.Elman}.
+\textit{Finding structure in time}. 
+Cognitive Science - Volume 14 , Issues : 2 , Pages 179-211 , 1990.
+
+\bibitem{Vanishing Gradient Problem}
+\textbf{Sepp Hochreiter}.
+\textit{Untersuchungen zu dynamischen neuronalen Netzen (German) [Investigations on dynamic neural networks]}. 
+Diploma Thesis, TU Munich , 1991.
+
+\bibitem{BPTT} 
+\textbf{P.J. Werbos}. 
+\textit{Backpropagation through time: what it does and how to do it.} 
+ Proceedings of the IEEE - Volume: 78, Issue: 10, 1990.
+ 
+\bibitem{LSTM}
+\textbf{Sepp Hochreiter and Jürgen Schmidhuber}.
+\textit{Long Short-Term Memory}. 
+Neural Computation - Volume 9  , Issue 8 , 1997. 
+
+\bibitem{Clipping}
+\textbf{Razvan Pascanu , Tomas Mikolov and 	Yoshua Bengio}.
+\textit{On the difficulty of training recurrent neural networks}. 
+ICML'13 Proceedings of the 30th International Conference on Machine Learning - Volume 28  , Pages III-1310-III-1318, 2013. 
+
+\bibitem{RNN Architecture}
+\textbf{Hojjat Salehinejad, Sharan Sankar, Joseph Barfett, Errol Colak, and Shahrokh Valaee}.
+\textit{Recent Advances in Recurrent Neural Networks}. 
+ arXiv preprint arXiv:1801.01078 , 2017.
+ 
+
+\bibitem{Adam}
+\textbf{Diederik P. Kingma and Jimmy Ba}.
+\textit{Adam: A Method for Stochastic Optimization}. 
+International Conference for Learning Representations, 2015.
+
+\bibitem{SCA}
+\textbf{Simone Scardapane and Paolo Di Lorenzo}.
+\textit{Stochastic Training of Neural Networks via Successive Convex Approximations}. 
+ IEEE Transactions on Neural Networks and Learning Systems - Volume: PP, Issue: 99 , 2018.
+
+
+\bibitem{SGD}
+\textbf{J. Kiefer and J. Wolfowitz}.
+\textit{Stochastic Estimation of the Maximum of a Regression Function}. 
+The Annals of Mathematical Statistics - Volume: 23, Issue: 3 , Pages 462-466 , 1952.
+
+\bibitem{GD}
+\textbf{Sebastian Ruder}.
+\textit{An overview of gradient descent optimization algorithms}. 
+arXiv:1609.04747 , 2016
+
+\bibitem{GD}
+\textbf{Ilya Sutskever, James Martens, George Dahl and Geoffrey Hinton}.
+\textit{On the importance of initialization and momentum in deep learning}. 
+ICML'13 Proceedings of the 30th International Conference on Machine Learning - Volume 28 ,Pages III-1139-III-1147, 2013
+
+\bibitem{Adagrad}
+\textbf{J. Duchi, E. Hazan, and Y. Singer}.
+\textit{Adaptive subgradient methods for online learning and stochastic optimization}. 
+ Journal of Machine Learning Research - Volume 12, Pages 2121--2159, 2011
+ 
+\bibitem{Adadelta}
+\textbf{Matthew D. Zeiler}.
+\textit{ADADELTA: An Adaptive Learning Rate Method}. 
+arXiv:1212.5701, 2012
+
+\bibitem{Fista}
+\textbf{Amir Beck and Marc Teboulle}.
+\textit{A Fast Iterative Shrinkage-Thresholding Algorithm for Linear Inverse Problems}. 
+SIAM Journal on Imaging Sciences , Volume 2, Issues 1 , 2009
+
+\bibitem{Nesta}
+\textbf{Stephen Becker, Jérôme Bobin and Emmanuel J. Candès}.
+\textit{NESTA: A Fast and Accurate First-Order Method for Sparse Recovery}. 
+SIAM Journal on Imaging Sciences , Volume 4, Issues 1 , Pages 1-39 , 2009
+
+\bibitem{SPGL1}
+\textbf{E. van den Berg and M. P. Friedlander}.
+\textit{SPGL1: A solver for large-scale sparse reconstruction}. 
+
+\bibitem{GPSR}
+\textbf{Zhang Ning, Yunho Jung, Yan Jin and Kee-Cheon Kim}.
+\textit{Route Optimization for GPSR in VANET}.
+IEEE International Advance Computing Conference , 2009.
+
+\bibitem{GSP}
+\textbf{Simone Scardapane, Danilo Comminiello, Amir Hussain and Aurelio Uncini}.
+\textit{Group sparse regularization for deep neural networks}.
+Neurocomputing - Volume 241, Issue C, Pages 81-89, 2017
+
+\newpage
+
+\bibitem{Gaussian Process}
+\textbf{Leslie Foster, Alex Waagen, Nabeela Aijaz, Michael Hurley, Apolonio Luis, Joel Rinsky, 
+Chandrika Satyavolu, Michael J. Way, Paul Gazis and Ashok Srivastava}.
+\textit{Stable and Efficient Gaussian Process Calculations}.
+Journal of Machine Learning Research - Volume 10, 2009.
+
+\bibitem{Hyper Pa}
+\textbf{Emmanuel Kieffer, Grégoire Danoy, Pascal Bouvry and Anass Nagih}.
+\textit{Bayesian optimization approach of general bi-level problems}.
+GECCO '17 Proceedings of the Genetic and Evolutionary Computation Conference Companion , Pages 1614-1621, 2017.
+
+\bibitem{GPyOpt}
+\textbf{The GPyOpt authors}.
+\textit{GPyOpt: A Bayesian Optimization framework in Python}.
+GPyOpt, 2016.
+
+\bibitem{Momentum}
+\textbf{Ning Qian}.
+\textit{On the momentum term in gradient descent learning algorithms}.
+Neural networks : the official journal of the International Neural Network Society, 12(1):145–151, 1999
+
+\bibitem{RTRL}
+\textbf{R. Williams, and D. Zipser}.
+\textit{A learning algorithm for continually running fully recurrent neural networks}.
+Neural Computation - Volume 1 , Issues 2, Pages 270-280, 1989.
+
+
+\bibitem{Quasi Newton}
+\textbf{J. Sohl-dickstein, B. Poole, and S. Ganguli}.
+\textit{Fast large-scale optimization by unifying stochastic gradient and quasi-newton methods}.
+31st International Conference on Machine Learning (ICML), Pages 604-612 , 2014. 
+
+\bibitem{NR}
+\textbf{James Martens and Ilya Sutskever}.
+\textit{Learning recurrent neural networks with hessian-free optimization}.
+ICML'11 Proceedings of the 28th International Conference on International Conference on Machine Learning, Pages 1033-1040 , 2014. 
+
+\bibitem{ReLU}
+\textbf{X. Glorot, A. Bordes, and Y. Bengio}.
+\textit{Deep Sparse Rectifier Neural Networks}.
+14th International Conference on Artificial Intelligence and Statistics (AISTATS), Pages 315–323, 2011
+
+\bibitem{MaxOut}
+\textbf{I. J. Goodfellow, D. Warde-farley, M. Mirza, A. Courville, and Y. Bengio}.
+\textit{Maxout networks}.
+Proc. 30th International Conference on Machine Learning (ICML), Pages 1319–1327, 2013
+
+
+
+
+
+\end{thebibliography}
+
+
+\end{document}

@@ -1,0 +1,209 @@
+In this chapter, I discuss the optimization in recurrent neural networks with newly proposed Successive convex approximation [8]. More specifically, I discuss the idea of Successive convex approximation [8], the set up as previously discussed in the first chapter and then move to introduce some notations for a general recurrent neural network. I then provide the necessary relationships to understand the entire optimization process including the loss function and regularization which are adapted from [8].    
+
+\section {Successive Convex Approximation}
+
+Successive convex approximation [8] is a newly proposed family of algorithms used to train neural networks. It has been previously discussed in detail in [8] where authors have used it to train feed forward neural networks. In this section, I introduce some new notations specific for a general recurrent neural network. More specifically, I provide the concept of Successive convex approximation as taken from [8]. I then move to describe the necessary expressions for Successive convex approximation as an optimization tool for recurrent neural networks.
+
+The idea behind Successive convex approximation is to replace the original non convex, high dimensional optimization problem as discussed in the first chapter with a series of convex approximations. This is done by substituting the original loss function of optimization with a surrogate loss function. In [8], authors propose the linear approximation of the neural network function. The surrogate loss function, in general, is designed to simplify the optimization problem.
+ 
+More specifically, I introduce the the following notations. Let $f(\textbf{w};j,\textbf{x}_i)$ be a generic recurrent neural network function which takes two arguments. The first argument is the time step $j$ while the second argument is the real valued vector of inputs $\textbf{x}_i\in R^{d}$ i.e. $i$th training example at time $j$ and $\textbf{w}$ is a vector set of configurable parameters of the neural network and has to be learned from the external data set.  
+
+Assuming we have a training data set of $N$ sequences where each such sequence can be denoted as 
+$S=\lbrace \textbf{x}_i,y_i \rbrace$. Also, assuming to have fixed the number of time steps which is denoted by $M$. Using the results directly provided in [8] and the optimization problem discussed in the first chapter, the learning of the recurrent neural network becomes.
+\begin{equation}
+min(U(\textbf{w}))=\frac{1}{N}\frac{1}{M} \sum_{i=1}^{N} \sum_{j=1}^{M} l(y_{ij},f(\textbf{w};j,\textbf{x}_i))+\lambda r(\textbf{w})
+\end{equation} 
+
+In (3.1), $y_{ij}$ is the actual output for the sequence $i$ at time step $j$, 
+$f(\textbf{w};j,\textbf{x}_i)$ is the corresponding estimated output, and $l(.,.)$ is a convex, smooth loss function as discussed in the first chapter. $r(\textbf{w})$ is the regularization term which is weighted by a scalar $\lambda$.
+
+Successive convex approximation [8] implies certain assumptions on the activation functions of the neurons and the surrogate functions for $l(.,.)$ which can be used in the optimization. These assumptions are discussed in the next section.
+\newpage
+
+\section {Assumption Set in Successive Convex Approximation}
+
+In this section, I provide assumptions and constraints on recurrent neural network function and the loss function as taken from the existing literature on Successive convex approximation [8]. This is to provide the theoretical guarantees of convergence for Successive convex approximation. These assumptions are provided below.   
+ 
+\begin{itemize}
+	\item $f$ is continuously differentiable with respect to it's parameters denoted as $\textbf{w}$
+	\item $f$ has Lipshitz continuous gradient with respect to $\textbf{w}$ for some constant $D>0$
+	\item $\hat{l_{ij}}$ is convex and differentiable with respect to $\textbf{w}$ anywhere. 
+	\item $\delta \hat{l_{ij}}(\textbf{w};\textbf{w})$ = $\delta l_{ij}(\textbf{w})$ for any $\textbf{w}$
+	\item $\hat{l_{ij}}$ has Lipshitz continuous gradient with respect to $\textbf{w}$ for some constant $E>0$
+\end{itemize}
+
+Satisfying these assumptions means the surrogate loss $\hat{l_{ij}}$ keeps the first order properties of the original loss $l_{ij}$ which is the fundamental building block of the optimization. This also means that the neural network function $f$ has some constraints on the choice of the activation functions. Thus, activation functions with non differentiable points such as ReLu [26] and maxout neurons [27] are unable to be optimized using Successive convex aproximation at this point. A final point in this regard is that these assumptions are highly flexible and can result in a variety of surrogate loss functions to be used in optimization. 
+
+We can now understand that the simplest way to solve the optimization problem in (3.1) is to use Stochastic gradient descent SGD [10] which has been discussed in the previous chapter. The update rule for Stochastic gradient descent is provided in (3.2).
+
+\begin{equation}
+\textbf{w}_{k+1} = \textbf{w}_k - \alpha_k \delta U(\textbf{w}_k)
+\end{equation}
+Here $\textbf{w}_k$ is a very generic notation describing all the configurable parameters of the neural networks at iteration $k$, and $\alpha_k$ is slowly diminishing step size. There can be a lot of variants of Stochastic gradient dsescent which have their advantages and disadvantages. 
+
+Theoretically, Stochastic gradient descent only uses the first order information of the cost function $U(.)$ which typically results in slow convergence. Successive convex approximation on the other hand tries to build the approximation of this convex cost function which can preserve as much as its convexity.
+More specifically, Successive convex approximation builds a strong convex approximation for each loss $l_{ij}$ with a surrogate loss $\hat{l_{ij}}$ which keeps the first order properties of the former as specified in the assumption set. Next, Successive convex approximation solves this surrogate optimization problem which will be formally expressed below. The new estimate of the parameters $\textbf{w}$ then becomes a convex combination of the previous estimates and the solution to the surrogate optimization problem.   
+Taking the problem specified in (3.1), I now formally introduce some notations for Successive convex approximation.
+
+Let $l_{ij}(\textbf{w})=l(y_{ij},f(\textbf{w};j,\textbf{x}_i))$ be a single loss term in (3.1) and let
+$\hat{l_{ij}}(\textbf{w};\textbf{w}_k)$ be a surrogate loss of $l_{ij}$ which meets the certain assumptions by Successive convex approximation discussed above. Then, the update rule at iteration $k$ by using a mini batch $B_k$ becomes
+
+\begin{equation}
+\begin{aligned}
+\hat{\textbf{w}}_{k+1} = argmin : \textbf{w}  \lbrace\frac{\rho_k}{NM}. \sum_{i=1}^{N} \sum_{j=1}^{M} \hat{l_{ij}} (\textbf{w};\textbf{w}_k) + \lambda r(\textbf{w})  \\ +(1-\rho_k) \textbf{d}_k^T (\textbf{w}-\textbf{w}_k) + \tau \|\textbf{w}-\textbf{w}_k\|_2^2\rbrace
+\end{aligned}
+\end{equation}
+
+Here
+\begin{itemize}
+  \item $N$ is the number of data points i.e. input example(s) in the mini batch.
+  \item $M$ is the number of time steps in unfolded recurrent neural network. $M$ can be considered a variable but here I assume it's fixed to a scalar.
+  \item $\textbf{d}_k\in R^Q$ is the smoothed average of gradients untill iteration $k$.
+  \item $\rho_k$ is scalar used to weight the information of current mini batch $B_k$ w.r.t historical information kept in $\textbf{d}_k$.
+  \item The last term with $\tau$ is used to make the optimization problem strongly convex.
+\end{itemize}
+
+The above equation gives us an estimate of weights for the next iteration. This estimate depends only on the current mini batch and the smoothed average of previous gradients. We use this estimate of weights for the next iteration with current weights. Both terms are weighted by an iteration dependent step size 
+$\alpha_k$. The equation for this is given as
+
+\begin{equation}
+\textbf{w}_{k+1} = (1-\alpha_k) \textbf{w}_k + \alpha_k \hat{\textbf{w}}_{k+1}
+\end{equation}
+
+While the equation to update the variable $d_k$ becomes
+
+\begin{equation}
+\textbf{d}_{k+1} = (1-\rho_k) \textbf{d}_k + \frac{\rho_k}{NM}  \sum_{i=1}^{N} \sum_{j=1}^{M} \delta l_{ij}(\textbf{w}_k))
+\end{equation}
+
+I skip here the proof of convergence presented in [8] to $\textbf{w}^*$, which is a local solution of (3.1). 
+
+\section {Surrogate Optimization in Successive Convex Approximation}
+
+Now that we understand how Successive convex approximation updates the weights of the neurons, I discuss how we can make the surrogate optimization. Fundamentally, we have to approximate the convex cost function at each iteration, in a way such that the approximation is easier to work with. Although in principle we can choose any surrogate loss function which satisfies the assumption set in Successive convex approximation framework, it's quite intuitive that we want to preserve the convexity of the loss function as much as possible. Thus, the fundamental linear approximation of the loss function given as
+
+\begin{equation}
+\hat{l_{ij}} (\textbf{w};\textbf{w}_k) = l_{ij}(\textbf{w}_k) + \delta l_{ij} (\textbf{w}_k) (\textbf{w}-\textbf{w}_k)
+\end{equation}
+
+can not preserve the entire hidden convexity of the loss function. Thus, in [8], authors provide a reasonable way to preserve the convexity of loss function which is done by substituting the original neural network function with first order linear approximation. The neural network function 
+$f(\textbf{w}_k;j,\textbf{x}_{i})$ is approximated by
+
+\begin{equation}
+\hat{f_{ij}}(\textbf{w};\textbf{w}_k)=f(\textbf{w}_k;j,\textbf{x}_{i})+\textbf{J}_{ij,k}(\textbf{w}-\textbf{w}_k) 
+\end{equation}
+
+whereas 
+
+\begin{equation}
+\textbf{J}_{ij,k} = \frac{\delta (f(\textbf{w}_k;j,\textbf{x}_i)}{\delta \textbf{w}_k} 
+\end{equation}
+
+is the vector of partial derivatives of single neural network output with respect to current parameters. In [8], authors describe it as weight jacobian. Here, we have total of $M*N$ such jacobian vectors at every iteration $k$. The total space required to store these matrices is in the order of $M*N*Q$ where 
+$M$, $N$ and $Q$ have been discussed above.
+
+After having all the necessary ingredients for the approximation of the loss function, it can be defined as
+
+\begin{equation}
+\hat{l_{ij}} (\textbf{w};\textbf{w}_k) = l(y_{ij},\hat{f_{ij}} (\textbf{w};\textbf{w}_k) )
+\end{equation}
+
+It can be shown in [8] that this surrogate loss function satisfies all the assumptions. Thus, it can be used for optimization and convergence can be achieved theoretically.
+
+In the next section, I discuss two possible choices for regularization namely $L_1$ and $L_2$ same as [8].  
+
+\section {Successive Convex Approximation with L2 Regularization}
+
+In this section, I describe how to use Successive convex approximation for a mean squared loss with $l_2$ regularization. I describe
+ 
+\begin{equation}
+l(a,b) = (a-b)^{2} 
+\end{equation}
+\begin{equation}
+r(\textbf{w}) = \frac{1}{2}\|\textbf{w}\|_2^2
+\end{equation}
+
+where (3.10) shows a squared loss function whereas (3.11) describes an $l_2$ regularization.
+Because we have very strong convex regularization term, we can set $\tau$ to be zero in (3.3). A residual term $r_{ij,k}$ is described in the next equation which will be used in algebra manipulations same as [8].
+
+\begin{equation}
+r_{ij,k} = y_{ij} - f(\textbf{w}_k;j,\textbf{x}_i) + \textbf{J}_{ij,k}^T \textbf{w}_k
+\end{equation} 
+Using $r_{ij,k}$ and defining 
+\begin{equation}
+\textbf{A}_k = \frac{\rho_k}{NM}. \sum_{i=1}^{N} \sum_{j=1}^{M} \textbf{J}_{ij,k} \textbf{J}_{ij,k}^T
+\end{equation}
+\begin{equation}
+\textbf{b}_k = \frac{\rho_k}{NM}. \sum_{i=1}^{N} \sum_{j=1}^{M} \textbf{J}_{ij,k} r_{ij,k} - \frac{(1-\rho_k)}{2}. \textbf{w}_k
+\end{equation}
+
+the optimization problem in (3.3) can be written as
+
+\begin{equation}
+\begin{aligned}
+\hat{\textbf{w}}_{k+1} = argmin : \textbf{w}  \lbrace \textbf{w}^T \left( \textbf{A}_k + \lambda \textbf{I} \right) \textbf{w}_i -2 \textbf{b}_k^T \textbf{w}  \rbrace
+\end{aligned}
+\end{equation}
+
+where $\textbf{I}$ is the identity matrix.  The optimization problem in (3.15) is quadratic. The solution of this quadratic problem (3.15) is given by,
+
+\begin{equation}
+\hat{\textbf{w}}_{k+1} = \left( \textbf{A}_k + \lambda \textbf{I} \right)^{-1} \textbf{b}_k
+\end{equation}
+
+Note that (3.16) gives us a solution to optimize a surrogate loss function. This solution involves inversion of a square matrix with dimensions $Q*Q$ where $Q$ denotes the number of entries in the vector set of parameters i.e total number of parameters in the entire neural network. At times, this solution is difficult to obtain since for problems related to computer vision, we may have as many as a few million parameter. As such, keeping a square matrix with dimensions in millions is practically impossible. In that case, authors in [8] describe a decomposition strategy to solve this efficiently. I skip those details here. 
+
+Another important comment about the solution in (3.16) is the possibility of numerical problems. If that happens, we can always set $\tau > 0$ and we will get the solution
+
+\begin{equation}
+\hat{\textbf{w}}_{k+1} = \left( \textbf{A}_k + (\lambda+\tau) \textbf{I} \right)^{-1} (\textbf{b}_k+\tau \textbf{w}_k)
+\end{equation}
+
+which is in principle the same as (3.16) and converges to the local solution of (3.1). 
+
+
+\newpage
+\section {Successive Convex Approximation with L1 Regularization}
+
+We can denote $l_1$ regularization as
+
+\begin{equation}
+r(\textbf{w}) = \|\textbf{w}\|_{1} = \sum_{i\in Q} |\textbf{w}_i|
+\end{equation}
+
+where $Q$ is the vector of parameters.
+
+The surrogate optimization problem using $l_1$ regularization can be written as
+
+\begin{equation}
+\begin{aligned}
+\hat{\textbf{w}}_{k+1} = argmin : \textbf{w}  \lbrace \textbf{w}^T \textbf{A}_{k} \textbf{w}_i - 2 \textbf{b}_k^T \textbf{w} + \lambda \|\textbf{w}\|_1\rbrace
+\end{aligned}
+\end{equation}
+
+The problem in (2.25) can be solved by a wide range of proximal gradient methods such as FISTA [14], NESTA [15] , SPGL1 [16]and GPSR [17]. The formulation in (3.19) can be extended to group sparse [18] which is a structured from of regularization. Most algorithms which solve (3.19) can also solve the group sparse regularization.
+
+\section {Effecient Jacobian Computation} 
+
+Successive convex approximation is a surrogate approximation of problem in (3.1). Successive convex approximation has nice theoretical properties including the convergence of surrogate optimization and the choice of regularization. The biggest challenge in Successive convex approximation from a practical point of view is the efficient computation of (3.8). It is evident from the relationships in (3.12), (3.13) and (3.14) that the term weight jacobian which is present in (3.8) is the fundamental building block of the entire optimization process. Thus, in this section I explain some practical insight into the computation of this term. 
+
+The relationship in (1.4) and (1.6) tell us that the hidden state of the neural network at any time step $t$ can be computed using only the input, the previous hidden state and the set of parameters required for the connections. Thus, at every time step, we can save an auxiliary variable $z$ in the memory which is the current hidden state $\textbf{h}_{t}$ and avoid the re-computation of this term when we compute the next hidden state $\textbf{h}_{t+1}$. 
+
+Once we compute the hidden state at any time step, computing the output at that time step is trivial and is thus skipped. The pseudo-code for efficient hidden state computation is given in Algorithm 1. This algorithm can be used to compute the expression in (3.12), (3.13) and (3.14). 
+
+\begin{algorithm}
+\caption{Pseudo-code to compute hidden state at every time step}
+\begin{algorithmic}
+\STATE  $\textbf{h}_0 \leftarrow 0$
+\STATE  $j \leftarrow 1$
+\STATE  $z \leftarrow \textbf{h}_0$
+\WHILE{$j<m$}
+\STATE Compute $\textbf{h}_j$ from (1.4) Using the auxiliary variable $z$ instead of $\textbf{h}_{j-1}$
+\STATE Update the auxiliary variable as $z \leftarrow \textbf{h}_j$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+In the pseudo-code, $m$ denotes the number of time steps. Finally, to compute the term in (3.8), we have to use the Back-propagation through time aka BPTT which is a standard algorithm to calculate the gradients in recurrent neural networks. I will skip the analytic derivation of BPTT which is present in [3]. 
+
+  

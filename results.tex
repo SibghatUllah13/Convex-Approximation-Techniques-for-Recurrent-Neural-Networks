@@ -1,0 +1,200 @@
+In this chapter, I present some experimental evidence on the performance comparison of Successive convex approximation with state of the art neural networks training algorithm Adam on benchmark classification problems. More specifically, I compare the performance comparison in two settings i.e. with default hyper-parameters and with hyper-parameters received from Gaussian Processes (GP) as implemented in GPyOpt. I use two data sets Mnist and Fashion Mnist, two training algorithms Adam and Successive convex approximation, and two input representations called standard and column wise through out this chapter respectively. Finally, I present the conclusion of the dissertation and the future research line on Successive convex approximation. 
+
+\section {Experimental Results}
+ 
+In this section, I present some experimental insight into the performance comparison of Adam and Successive convex approximation. There were total of 16 experiments. This was due to the fact that I used two data sets namely the famous hand written digits database MNIST and zalando's article images database Fashion MNIST. Further, the performance comparison involved two algorithms Adam and Successive convex approximation. The two variations of input representation namely row wise (called standard throughout the chapter) and column wise resulted in 8 experiments. 
+
+The total experiments rose to 16 because of the hyper-parameters optimization as discussed in the previous chapter. More specifically, the above set up of 8 experiments was run for two cases. The first case where we used the default hyper-parameters of both training algorithms while the later concerned with the hyper-parameter optimization of both algorithms using Gaussian processes.
+ 
+I will briefly discuss the both data sets and the two choices for input representations. Next, I will present the performance comparison using default hyper-parameters for both algorithms.
+
+
+\section {Data Sets and Input Representation}
+ 
+MNIST is a database of hand written images (digits) and is one of the widely used synthetic data sets for classification. The data set has a total of 60,000 instances. In the experiments, I divide the training data set of MNIST in two disjoint sets. The first set containing the first 50,000 instances is called the training set. The second set containing the last 10,00 instances is called test set. The same process is repeated for Fashion MNIST since both data sets are identical. 
+
+For MNIST, all the images have been size normalized and centered in a fix size image. More specifically, the original grey scale images from NIST have been sized normalized so they can fit in a 20*20 pixel box keeping their aspect ratio intact. Later, the digits were centered in a 28*28 image by computing the center of the mass of the pixels, and translating the image so as to position this point at the center of the 28x28 field. Each image in MNIST belongs to one of the ten classes 0-9. 
+
+Fashion MNIST is a data set of Zalando's article images with 60,000 instances. Each example is a 28x28 gray scale image, associated with a label from 10 classes. As it is evident from the name, Fashion MNIST images belong to one of the 10 Fashion classes. Fashion MNIST is considered to be relatively difficult to classify compared to MNIST.  
+
+For the sake of these experiments, I explicitly convert the labels of the images in both data sets in one hot encoding form. The LSTM architecture which I'm using for these experiments has 2 hidden layers each with 14 neurons. The input layer has 28 neurons and the sequence length is also 28. This means that for a single image, neural network will receive 28 pixels at a single time step, process them into 2 hidden layer each with 14 neurons and produce hidden state and output of the network. This process will be repeated 28 times. At the last time time step, the final output of the hidden layers will be received. The output layer of the neural network will take this output of the hidden layers as input and convert them into the number of classes. The size of mini batches for both training algorithms is 40. 
+
+Now that we have a gentle idea of both data sets and neural network architecture, I can proceed to the way the input is fed to the LSTM networks. More specifically, every instance in both data sets is a 28*28 matrix. This matrix can be presented to LSTM as input without doing anything else. I refer to this choice as row wise or standard choice. This means that LSTM will receive 28 pixels of a row at single time step. At next time step, it will receive another 28 pixels for the next row and so on to receive all 784 pixels. As an opposite to this, we can feed the neural network with 28 pixels of a column at input layer and repeat this process for all columns untill all 784 pixels have been used in the input. I refer to this choice as column wise representation.  
+
+
+
+\section {Performance Comparison using Default Hyper Parameters}
+
+Now, I will present the performance results for both training algorithms on MNIST data set with default hyper-parameters. The default hyper-parameters for Adam and Successive convex approximation are presented in [7] and [8] respectively. The regularization parameter $\lambda$ is set to zero. The error function and test accuracy are presented in figure 5.1.
+ 
+\begin{figure*}[t!]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.0in]{default_mnist_error}
+        \caption{Training Phase}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=1.98in]{default_mnist_acc}
+        \caption{Test Phase}
+    \end{subfigure}
+    \caption{Performance comparison on Mnist using default hyper-parameters}
+\end{figure*} 
+
+\begin{table}
+\begin{center}
+ \begin{tabular}{||c|| c ||c|| c|| c|| c||} 
+ \hline
+ Algorithm & Input Representation & Median & Mean & Max & Min \\ [0.5ex] 
+ \hline\hline
+ Adam & Standard & 92.5 & 91.69 & 100.0 & 77.5 \\ 
+ \hline
+ SCA & Standard & 85.0 & 84.14 & 97.5 & 67.5 \\
+ \hline
+ Adam & Column & 90.0 & 90.62 & 100.0 & 75.0\\
+ \hline
+ SCA & Column & 90.0 & 89.34 & 100.0 & 70.0  \\
+ \hline
+\end{tabular}
+\end{center}
+\caption{Adam vs Successive convex approximation performance comparison on MNIST Using default hyper-parameters}
+\end{table}
+
+It is evident that both algorithms are competitive and produce really good results. The mean test scores for Adam and Successive convex approximation with standard input representation are 91.69 $\%$and 84.14 $\%$ respectively. For column wise representation, the mean test scores for Adam and Successive convex approximation are 90.62 $\%$and 89.34 $\%$ respectively. The maximum test score for Adam and Successive convex approximation in standard representation is 100 $\%$ and 97.5 $\%$. For column wise representation, this score is 100 $\%$ for both algorithms. The minimum test score for Adam and Successive convex approximation in standard representation is 75 $\%$ and 67.5 $\%$ while for column wise representation, the scores are 77.5 $\%$ and 70 $\%$. Both algorithms produce good test accuracy, and can be seen that Successive convex approximation is competitive with Adam. The mean, median, maximum and minimum test score for both Adam and Successive convex approximation on MNIST are presented in Table 5.1. 
+
+Next, I will describe the experimental results on Fashion MNIST using the same default hyper-parameters. These results are presented in figure 5.2. Both algorithms produce good results but slightly less than MNIST. This is evident since Fashion MNIST is used as a relatively difficult data set for classification than MNIST. Using Fashion MNIST, the mean test scores for Adam and Successive convex approximation with standard input representation are 79.35 $\%$and 78.9 $\%$ respectively. For column wise representation, the mean test scores for Adam and Successive convex approximation are 76.31 $\%$and 76.925 $\%$ respectively. The maximum test score for Adam and Successive convex approximation in standard representation is 92.5 $\%$ and 97.5 $\%$. For column wise representation, this score is 95.0 and 97.5 $\%$ respectively. The minimum test score for Adam and Successive convex approximation in standard representation is 55 $\%$ and 52.5 $\%$ while for column wise representation, the scores are 55 $\%$ and 57.5 $\%$. These experimental results are also presented in Table 5.2. It can be seen that Successive convex approximation is almost as good as Adam as the median test classification score is exactly the same. Successive convex approximation also has better mean score in column wise representation. 
+
+
+\begin{figure*}[t!]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.0in]{default_fashion_err}
+        \caption{Training Phase}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=1.98in]{default_fashion_acc}
+        \caption{Test Phase}
+    \end{subfigure}
+    \caption{Performance comparison on Fashion MNIST using default hyper-parameters}
+\end{figure*} 
+
+
+
+\begin{table}
+\begin{center}
+ \begin{tabular}{||c|| c ||c|| c|| c|| c||} 
+ \hline
+ Algorithm & Input Representation & Median & Mean & Max & Min \\ [0.5ex] 
+ \hline\hline
+ Adam & Standard & 80.0 & 79.35 & 92.5 & 55.0 \\ 
+ \hline
+ SCA & Standard & 80.0 & 78.9 & 97.5 & 52.5 \\
+ \hline
+ Adam & Column & 77.5 & 76.31 & 95.0 & 55.0\\
+ \hline
+ SCA & Column & 77.5 & 76.925 & 97.5 & 57.5  \\
+ \hline
+\end{tabular}
+\end{center}
+\caption{Adam vs Successive convex approximation performance comparison on Fashion MNIST using default hyper-parameters}
+\end{table}
+
+As a final note, we can safely conclude that both training algorithms produce competitive results using default hyper-parameters with Successive convex approximation surpassing Adam in some cases. In the next section, performance comparison involves hyper-parameters optimization.
+
+\newpage
+
+\section {Performance Comparison using Hyper-parameters Optimization}
+
+\begin{figure*}[t!]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.0in]{hyper_mnist_err}
+        \caption{Training Phase}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=1.98in]{hyper_mnist_acc}
+        \caption{Test Phase}
+    \end{subfigure}
+    \caption{Performance comparison on MNIST using hyper-parameters from Gaussian processes}
+\end{figure*} 
+
+\begin{table}
+\begin{center}
+ \begin{tabular}{||c|| c ||c|| c|| c|| c||} 
+ \hline
+ Algorithm & Input Representation & Median & Mean & Max & Min \\ [0.5ex] 
+ \hline\hline
+ Adam & Standard & 90.0 & 90.008 & 100.0 & 75.0 \\ 
+ \hline
+ SCA & Standard & 87.5 & 86.19 & 100.0 & 67.5 \\
+ \hline
+ Adam & Column & 67.5 & 67.13 & 85.0 & 42.5\\
+ \hline
+ SCA & Column & 87.5 & 87.66 & 100.0 & 75.0  \\
+ \hline
+\end{tabular}
+\end{center}
+\caption{Adam vs Successive convex approximation performance comparison on MNIST using hyper-parameters from Gaussian processes}
+\end{table}
+
+In this section, I compare the performance of both Adam and Successive convex approximation using the best hyper-parameters achieved within 50 iterations with GPyOpt. Using the data set MNIST, the results are presented in figure 5.3.
+
+As it is evident from the training phase, Successive convex approximation is performing better than Adam in this setting. The mean test scores for Adam and Successive convex approximation with standard input representation are 90.08 $\%$and 86.19 $\%$ respectively. For column wise representation, the mean test scores for Adam and Successive convex approximation are 67.13 $\%$and 87.66 $\%$ respectively. The maximum test score for both Adam and Successive convex approximation in standard representation is 100 $\%$. For column wise representation, this score is 85 $\%$ and 100 $\%$ respectively. The minimum test score for Adam and Successive convex approximation in standard representation is 75 $\%$ and 67.5 $\%$ while for column wise representation, the scores are 42.5 $\%$ and 75 $\%$. Although both algorithms produce good test accuracy, we can conclude that Successive convex approximation produces slightly better results in this experiment. The median,mean ,maximum and minimum test scores for both algorithms with hyper-parameters received from Gaussian processes on MNIST are also presented in Table 5.3
+
+The above set up is run for Fashion MNIST and the results achieved are presented in figure 5.4. It is evident that Adam is not training well due to the poorly fed hyper-parameters resulted from GPYOpt. Successive convex approximation on the other hand receives very impressive hyper-parameters and as a result outperforms Adam in this experiment. As was the case with default hyper parameters, both algorithms perform relatively poor than MNIST since Fashion MNIST is a challenging benchmark data set. The median, mean,maximum and minimum test scores for both algorithms with hyper-parameters received from Gaussian processes on Fashion MNIST are also presented in Table 5.4.
+
+The mean test scores for Adam and Successive convex approximation with standard input representation are 74.88 $\%$and 86.79 $\%$ respectively. For column wise representation, the mean test scores for Adam and Successive convex approximation are 73.55 $\%$and 84.14 $\%$ respectively. The maximum test score for both Adam and Successive convex approximation in standard representation is 92. 5 and 100 $\%$ respectively. For column wise representation, this score is 92.5 $\%$ and 97.5 $\%$ respectively. The minimum test score for Adam and Successive convex approximation in standard representation is 47.5 $\%$ and 67.5 $\%$ while for column wise representation, the scores are 52.5 $\%$ and 62.5 $\%$. Although both algorithms produce decent test accuracy, we can conclude that Successive convex approximation outperforms Adam in this experiment due to the presence of good hyper parameters.
+
+
+\begin{figure*}[t!]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.0in]{hyper_fashion_err}
+        \caption{Training Phase}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=1.98in]{hyper_fahion_acc}
+        \caption{Test Phase}
+    \end{subfigure}
+    \caption{Performance comparison on Fashion MNIST using hyper-parameters from Gaussian processes}
+\end{figure*}
+
+\begin{table}
+\begin{center}
+ \begin{tabular}{||c|| c ||c|| c|| c|| c||} 
+ \hline
+ Algorithm & Input Representation & Median & Mean & Max & Min \\ [0.5ex] 
+ \hline\hline
+ Adam & Standard & 75.0 & 74.88 & 92.5 & 47.5 \\ 
+ \hline
+ SCA & Standard & 87.5 & 86.79 & 100.0 & 67.5 \\
+ \hline
+ Adam & Column & 75.0 & 73.55 & 92.5 & 52.5\\
+ \hline
+ SCA & Column & 85.0 & 84.14 & 97.5 & 62.5  \\
+ \hline
+\end{tabular}
+\end{center}
+\caption{Adam vs Successive convex approximation performance comparison on Fashion MNIST Using hyper-parameters from Gaussian processes}
+\end{table}
+
+\section {Conclusion}
+
+In this dissertation, I studied the optimization in recurrent neural networks. As has been discussed above, learning in deep vanilla recurrent networks is still very much challenging due to the famous vanishing and exploding gradient problem. The state of the art on the approaches to solve vanishing and exploding gradient problem including the regulated architecture Long short term memory was also discussed.  Later, I presented an overview of the famous Gradient descent based first order algorithms including the Batch gradient descent, Stochastic gradient descent and Mini-batch gradient descent. Additionally, some material on the algorithms based on Momentum including Adagrad and Adam were presented. After the state of the art, I discussed the newly proposed Successive convex approximation for neural networks training and adapted the notations and concept to the recurrent architecture. I also briefly discussed the roles of hyper-parameters and the concept of hyper-parameters optimization. Finally, some experimental insight into the performance of Successive convex approximation with state of the art training algorithm Adam was presented. As can be seen from the figures and tables, Successive convex approximation is competitive with Adam and produces better results on some occasions. The future research line is to investigate Successive convex approximation for a variety of networks including convolutional, Bi-directional recurrent and Gated recurrent unit networks and on a variety of academic and industrial benchmark data sets.    
+
+
+
+
+
+
